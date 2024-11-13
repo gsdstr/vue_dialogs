@@ -1,13 +1,18 @@
 <template>
-  <div v-if="isVisible" class="dialog-overlay">
-    <div class="dialog-content">
-      <h2>{{ title }}</h2>
-      <p>{{ message }}</p>
-      <div class="dialog-actions">
-        <button @click="onCancel">Cancel</button>
-        <button @click="onConfirm">Confirm</button>
-      </div>
-    </div>
+  <div v-if="isVisible" class="dialog">
+    <header>
+      <span>Dialog</span>
+    </header>
+    <main>
+      <span>{{ dialog.title }}<!--ConfirmDialog.title:--></span>
+    </main>
+    <footer>
+      <!--on click resolve -> false-->
+      <button @click="onCancel">Отмена</button>
+
+      <!--on click resolve -> true-->
+      <button @click="onConfirm">Подтвердить</button>
+    </footer>
   </div>
 </template>
 
