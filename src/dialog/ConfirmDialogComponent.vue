@@ -1,23 +1,37 @@
 <template>
-  <div class="dialog">
-    <header>
-      <span>Dialog</span>
-    </header>
-    <main>
-      <span><!--ConfirmDialog.title:--></span>
-    </main>
-    <footer>
-      <!--on click resolve -> false-->
-      <button>Отмена</button>
-
-      <!--on click resolve -> true-->
-      <button>Подтвердить</button>
-    </footer>
+  <div v-if="isVisible" class="dialog-overlay">
+    <div class="dialog-content">
+      <h2>{{ title }}</h2>
+      <p>{{ message }}</p>
+      <div class="dialog-actions">
+        <button @click="onCancel">Cancel</button>
+        <button @click="onConfirm">Confirm</button>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup>
-// TODO: implement
+<script setup lang="ts">
+import { computed } from 'vue';
+import { Dialog } from './Dialog';
+
+interface Props {
+  dialog: Dialog<boolean>;
+  title: string;
+  message: string;
+}
+
+const props = defineProps<Props>();
+
+const isVisible = computed(() => props.dialog.isVisible);
+
+const onConfirm = () => {
+  (props.dialog as any).close(true);
+};
+
+const onCancel = () => {
+  (props.dialog as any).close(false);
+};
 </script>
 
 <style lang="sass">
