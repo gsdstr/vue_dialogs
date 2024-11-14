@@ -1,8 +1,5 @@
 import { Component } from 'vue';
-import { ref } from 'vue';
-
-// Create a reactive array to store dialog instances
-const dialogInstances = ref<Dialog[]>([]);
+import { dialogManager } from './DialogManager';
 
 export abstract class Dialog<T = boolean> {
   protected abstract component: Component;
@@ -10,12 +7,8 @@ export abstract class Dialog<T = boolean> {
   protected message: string = '';
   private resolvePromise?: (value: T) => void;
 
-  public static getInstances(): Dialog[] {
-    return dialogInstances.value;
-  }
-
   public open(): Promise<T> {
-    dialogInstances.value.push(this);
+    dialogManager.add(this);
     return new Promise<T>((resolve) => {
       this.resolvePromise = resolve;
     });
@@ -36,10 +29,7 @@ export abstract class Dialog<T = boolean> {
   }
 
   private close(): void {
-    const index = dialogInstances.value.indexOf(this);
-    if (index > -1) {
-      dialogInstances.value.splice(index, 1);
-    }
+    dialogManager.remove(this);
   }
 
   public getComponent(): Component {

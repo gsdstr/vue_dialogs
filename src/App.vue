@@ -2,53 +2,30 @@
   <div>
     <button @click="openDialog">Open Dialog</button>
   </div>
-  <!--@if "any dialogs are opened" -->
   <div id="app-dialog-root" class="dialog-root" v-if="activeDialogs.length">
-    <!--@for each dialog:-->
     <div class="wrapper">
-      <!-- dialog component goes here -->
       <component
-          v-for="dialog in activeDialogs"
-          :key="dialog.id"
-          :is="dialog.instance.getComponent()"
-          :dialog="dialog.instance"
-          :title="dialog.instance.getTitle()"
-          :message="dialog.instance.getMessage()"
+        v-for="(dialog, index) in activeDialogs"
+        :key="index"
+        :is="dialog.getComponent()"
+        :dialog="dialog"
+        :title="dialog.getTitle()"
+        :message="dialog.getMessage()"
       />
     </div>
-    <!--@end for each dialog-->
   </div>
-  <!--@end if "any dialogs are opened" -->
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Dialog } from "./dialog/Dialog";
+import { computed } from 'vue';
 import { ConfirmDialog } from "./dialog/ConfirmDialog";
+import { dialogManager } from './dialog/DialogManager';
 
 class ConfirmUserDeleteDialog extends ConfirmDialog {
   protected title = "Подтвердите удаление пользователя";
 }
 
-interface ActiveDialog {
-  id: number;
-  instance: Dialog;
-}
-
-const dialogCounter = ref(0);
-const activeDialogs = ref<ActiveDialog[]>([]);
-
-// Watch for changes in Dialog.instances
-watch(
-  () => Dialog.getInstances(),
-  (instances) => {
-    activeDialogs.value = instances.map(instance => ({
-      id: ++dialogCounter.value,
-      instance
-    }));
-  },
-  { deep: true }
-);
+const activeDialogs = computed(() => dialogManager.getDialogs().value);
 
 const openDialog = async () => {
   const dialog = new ConfirmUserDeleteDialog();
