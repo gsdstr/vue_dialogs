@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isVisible" class="dialog">
+  <div class="dialog">
     <header>
       <span>Dialog</span>
     </header>
@@ -8,35 +8,24 @@
     </main>
     <footer>
       <!--on click resolve -> false-->
-      <button @click="onCancel">Отмена</button>
+      <button @click="dialog.cancel()">Отмена</button>
 
       <!--on click resolve -> true-->
-      <button @click="onConfirm">Подтвердить</button>
+      <button @click="dialog.confirm()">Подтвердить</button>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Dialog } from './Dialog';
 
 interface Props {
-  dialog: Dialog<boolean>;
+  dialog: Dialog;
   title: string;
   message: string;
 }
 
 const props = defineProps<Props>();
-
-const isVisible = computed(() => props.dialog.isVisible);
-
-const onConfirm = () => {
-  (props.dialog as any).close(true);
-};
-
-const onCancel = () => {
-  (props.dialog as any).close(false);
-};
 </script>
 
 <style lang="sass">

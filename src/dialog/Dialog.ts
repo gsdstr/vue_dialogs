@@ -1,37 +1,57 @@
+import { Component } from 'vue';
+import { ref } from 'vue';
+
+// Create a reactive array to store dialog instances
+const dialogInstances = ref<Dialog[]>([]);
+
 export abstract class Dialog<T = boolean> {
+  protected abstract component: Component;
+  protected abstract title: string;
+  protected message: string = '';
   private resolvePromise?: (value: T) => void;
-  private rejectPromise?: (reason?: any) => void;
-  protected isOpen: boolean = false;
+
+  public static getInstances(): Dialog[] {
+    return dialogInstances.value;
+  }
 
   public open(): Promise<T> {
-    this.isOpen = true;
-    return new Promise<T>((resolve, reject) => {
+    dialogInstances.value.push(this);
+    return new Promise<T>((resolve) => {
       this.resolvePromise = resolve;
-      this.rejectPromise = reject;
     });
   }
 
-  protected close(result: T): void {
+  public confirm(): void {
     if (this.resolvePromise) {
-      this.resolvePromise(result);
-      this.cleanup();
+      this.resolvePromise(true as T);
+      this.close();
     }
   }
 
-  protected cancel(): void {
-    if (this.rejectPromise) {
-      this.rejectPromise();
-      this.cleanup();
+  public cancel(): void {
+    if (this.resolvePromise) {
+      this.resolvePromise(false as T);
+      this.close();
     }
   }
 
-  private cleanup(): void {
-    this.isOpen = false;
-    this.resolvePromise = undefined;
-    this.rejectPromise = undefined;
+  private close(): void {
+    const index = dialogInstances.value.indexOf(this);
+    if (index > -1) {
+      dialogInstances.value.splice(index, 1);
+    }
   }
 
-  public get isVisible(): boolean {
-    return this.isOpen;
+  public getComponent(): Component {
+    return this.component;
+  }
+
+  public getTitle(): string {
+    return this.title;
+  }
+
+  public getMessage(): string {
+    return this.message;
   }
 }
+
