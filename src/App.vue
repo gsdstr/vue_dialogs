@@ -3,19 +3,12 @@
     <button @click="openDialog">Open Dialog</button>
   </div>
 
-  <!--@if "any dialogs are opened" -->
-  <div id="app-dialog-root" class="dialog-root">
-    <!--@for each dialog:-->
-    <div class="wrapper">
-      <!-- dialog component goes here -->
-    </div>
-    <!--@end for each dialog-->
-  </div>
-  <!--@end if "any dialogs are opened" -->
+  <dialogs-manager/>
 </template>
 
 <script setup lang="ts">
-import { ConfirmDialog } from "./dialog/ConfirmDialog";
+import {ConfirmDialog} from "./dialog/ConfirmDialog";
+import DialogsManager from "./dialog/DialogsManager.vue";
 
 class ConfirmUserDeleteDialog extends ConfirmDialog {
   protected title = "Подтвердите удаление пользователя";

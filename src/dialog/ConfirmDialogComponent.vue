@@ -1,23 +1,37 @@
 <template>
   <div class="dialog">
     <header>
-      <span>Dialog</span>
+      <span>{{ dialog.header }}</span>
     </header>
     <main>
-      <span><!--ConfirmDialog.title:--></span>
+      <span>{{ dialog.title }} <!--ConfirmDialog.title:--></span>
     </main>
     <footer>
       <!--on click resolve -> false-->
-      <button>Отмена</button>
+      <button @click="onCancel">Отмена</button>
 
       <!--on click resolve -> true-->
-      <button>Подтвердить</button>
+      <button @click="onConfirm">Подтвердить</button>
     </footer>
   </div>
 </template>
 
-<script setup>
-// TODO: implement
+<script setup lang="ts">
+import { Dialog } from './Dialog';
+
+interface Props {
+  dialog: Dialog;
+}
+
+const props = defineProps<Props>();
+
+const onConfirm = () => {
+  props.dialog.complete(true);
+};
+
+const onCancel = () => {
+  props.dialog.complete(false);
+};
 </script>
 
 <style lang="sass">
